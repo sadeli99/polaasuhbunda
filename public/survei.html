@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Title -->
+    <title>Survei Pola Asuh Ibu Rumah Tangga - Fakultas Psikologi UPJ</title>
+
+    <!-- Description -->
+    <meta name="description" content="Survei penelitian Fakultas Psikologi UPJ tentang bagaimana ibu rumah tangga mengasuh anak. Partisipasi Anda sangat berarti untuk penelitian ini!">
+
+    <!-- Keywords -->
+    <meta name="keywords" content="Survei Ibu Rumah Tangga, Pola Asuh Anak, Parenting, Psikologi, Universitas Pembangunan Jaya, UPJ, Penelitian">
+
+    <!-- Author -->
+    <meta name="author" content="Fakultas Psikologi Universitas Pembangunan Jaya (UPJ)">
+
+    <!-- Open Graph (untuk tampilan saat dibagikan ke sosial media) -->
+    <meta property="og:title" content="Survei Pola Asuh Ibu Rumah Tangga - Fakultas Psikologi UPJ">
+    <meta property="og:description" content="Bantu penelitian kami dengan mengisi survei tentang bagaimana ibu rumah tangga mengasuh anak.">
+    <meta property="og:image" content="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdPhvFBhvjcTs86ZQS4Cj18zGaV8nS1Kx08GEycapuRzwX8Iawm31TQG3f&s=10">
+    <meta property="og:url" content="[URL-HALAMAN]">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card (untuk tampilan saat dibagikan ke Twitter/X) -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Survei Pola Asuh Ibu Rumah Tangga - Fakultas Psikologi UPJ">
+    <meta name="twitter:description" content="Fakultas Psikologi UPJ mengadakan survei tentang pola asuh ibu rumah tangga. Partisipasi Anda sangat berharga!">
+    <meta name="twitter:image" content="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdPhvFBhvjcTs86ZQS4Cj18zGaV8nS1Kx08GEycapuRzwX8Iawm31TQG3f&s=10">
+
+    <!-- Bootstrap 5 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+</head>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let userLogin = localStorage.getItem("userLogin");
+            let surveiSudahDikirim = localStorage.getItem("surveiSelesai");
+
+            // Jika survei sudah dikirim, alihkan ke onboarding-success.html
+            if (surveiSudahDikirim) {
+                window.location.href = "success.html";
+                return;
+            }
+
+            // Jika user belum login, alihkan ke login.html
+            if (!userLogin) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            // Simpan survei
+            document.getElementById("surveiForm").addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                let tanggalLahir = document.getElementById("tanggalLahir").value;
+                let waktuMengasuh = document.querySelector('input[name="waktuMengasuh"]:checked')?.value;
+                let metodePendidikan = document.querySelector('input[name="metodePendidikan"]:checked')?.value;
+                let kegiatanFavorit = document.getElementById("kegiatanFavorit").value.trim();
+                let tantangan = document.getElementById("tantangan").value.trim();
+
+                if (!tanggalLahir || !waktuMengasuh || !metodePendidikan || !kegiatanFavorit || !tantangan) {
+                    alert("Semua pertanyaan harus diisi!");
+                    return;
+                }
+
+                let dataSurvei = {
+                    tanggalLahir,
+                    waktuMengasuh,
+                    metodePendidikan,
+                    kegiatanFavorit,
+                    tantangan
+                };
+
+                localStorage.setItem("dataSurvei", JSON.stringify(dataSurvei));
+                localStorage.setItem("surveiSelesai", "true");
+
+                alert("Terima kasih! Survei telah dikirim.");
+                window.location.href = "success.html";
+            });
+        });
+    </script>
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="card shadow p-4">
+            <h2 class="text-center">Survei: Bagaimana Ibu Mengurus Anak?</h2>
+            <p class="text-center text-muted">Silakan isi survei ini dengan jujur.</p>
+
+            <form id="surveiForm">
+                <div class="mb-3">
+                    <label for="tanggalLahir" class="form-label">Tanggal Lahir Anda</label>
+                    <input type="date" id="tanggalLahir" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Berapa jam sehari Anda menghabiskan waktu untuk mengasuh anak?</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="waktuMengasuh" value="Kurang dari 3 jam" required>
+                        <label class="form-check-label">Kurang dari 3 jam</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="waktuMengasuh" value="3-6 jam">
+                        <label class="form-check-label">3-6 jam</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="waktuMengasuh" value="Lebih dari 6 jam">
+                        <label class="form-check-label">Lebih dari 6 jam</label>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Metode pendidikan apa yang paling sering Anda gunakan?</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="metodePendidikan" value="Pendidikan formal (sekolah, kursus)" required>
+                        <label class="form-check-label">Pendidikan formal (sekolah, kursus)</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="metodePendidikan" value="Belajar melalui bermain">
+                        <label class="form-check-label">Belajar melalui bermain</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="metodePendidikan" value="Belajar dari pengalaman sehari-hari">
+                        <label class="form-check-label">Belajar dari pengalaman sehari-hari</label>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="kegiatanFavorit" class="form-label">Apa kegiatan favorit Anda bersama anak?</label>
+                    <input type="text" id="kegiatanFavorit" class="form-control" placeholder="Contoh: Membaca buku, bermain di taman" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="tantangan" class="form-label">Apa tantangan terbesar dalam mengasuh anak?</label>
+                    <textarea id="tantangan" class="form-control" rows="3" placeholder="Ceritakan tantangan yang Anda alami" required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Kirim Survei</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

